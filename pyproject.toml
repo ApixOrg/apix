@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "apix"
+version = "0.1.0"
+description = ""
+authors = ["Danijel <dan@apix.org>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+uvicorn = "^0.21.1"
+starlette = "^0.26.1"
+pymongo = "^4.3.3"
+motor = "^3.1.1"
+graphql-core = "^3.2.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
