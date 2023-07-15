@@ -33,11 +33,11 @@ pip install git+https:://github.com/ApixOrg/apix.git
 
 ## Why use MongoDB and GraphQL?
 
-|                 | [<img src="https://drive.google.com/uc?id=1r3hrQhF0Ry8mH_7QzYr4VQaOUJhnXku5" height="50">](https://mongodb.com)                                    | [<img src="https://drive.google.com/uc?id=1E572-jLp5LAQXAqk-74tE3pi7xYEtc3j" height="50">](https://graphql.org)                                         |
-|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Description** | MongoDB is a schemaless database that stores arbitrary JSON objects (so called "Documents").                                                       | GraphQL is a flexible query language for APIs that allows you to specify exactly the fields which you want to request.                                  |
-| **Advantages**  | 1. Create document collections on-the-fly. <br/> 2. Documents can be nested and contain arrays. <br/> 3. Powerful data platform in the cloud available. | 1. Reduce the amount of data transmitted. <br/> 2. The requests are strictly type-safe. <br/>  3. Multiple resources can collected in a single request. |
-| **Article**     | [Why use MongoDB?](https://www.mongodb.com/why-use-mongodb)                                                                                        | [Why use GraphQL?](https://www.apollographql.com/blog/graphql/basics/why-use-graphql)                                                                   |
+|                 | [<img src="https://drive.google.com/uc?id=1r3hrQhF0Ry8mH_7QzYr4VQaOUJhnXku5" height="50">](https://mongodb.com)                                    | [<img src="https://drive.google.com/uc?id=1E572-jLp5LAQXAqk-74tE3pi7xYEtc3j" height="50">](https://graphql.org)                                            |
+|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Description** | MongoDB is a schemaless database that stores arbitrary JSON objects (so called "Documents").                                                       | GraphQL is a flexible query language for APIs that allows you to specify exactly the fields which you want to request.                                     |
+| **Advantages**  | 1. Create document collections on-the-fly. <br/> 2. Documents can be nested and contain arrays. <br/> 3. Powerful data platform in the cloud available. | 1. Reduce the amount of data transmitted. <br/> 2. The requests are strictly type-safe. <br/>  3. Multiple resources can be collected in a single request. |
+| **Article**     | [Why use MongoDB?](https://www.mongodb.com/why-use-mongodb)                                                                                        | [Why use GraphQL?](https://www.apollographql.com/blog/graphql/basics/why-use-graphql)                                                                      |
 
 ## Example App
 
@@ -69,7 +69,7 @@ User = ApixModel(
 # Function to create a user
 def create_user(user: User) -> User:
     Database(User).insert_one(user)
-    return User
+    return user
 
 
 # Function to find a user by name
@@ -94,7 +94,8 @@ if __name__ == '__main__':
 
 ```
 
-Once your app is running, the GraphQL API web interface is available at [http://localhost:8080/graphql](). Now open your favorite web client (such as [Insomnia](https://insomnia.rest) or [Postman](https://www.postman.com)) and create a user with the following request.
+Once your app is running, the GraphQL API web interface is available at [http://localhost:8080/graphql](). Now open your favorite web client (such as [Insomnia](https://insomnia.rest) or [Postman](https://www.postman.com)) 
+and create a user with the following request.
 
 ```graphql
 mutation {
