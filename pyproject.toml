@@ -1,13 +1,12 @@
 [tool.poetry]
 name = "apix"
-version = "0.1.0"
-description = ""
-authors = ["Danijel <dan@apix.org>"]
+version = "0.0.1"
+description = "apiX - A framework to create MongoDB-backed applications with a GraphQL API web interface."
+authors = ["Danijel Kivaranovic <dan@apix.org>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-uvicorn = "^0.21.1"
 starlette = "^0.26.1"
 pymongo = "^4.3.3"
 motor = "^3.1.1"
