@@ -1,9 +1,15 @@
 [tool.poetry]
 name = "apix"
+dynamic = ["version"]
 version = "0.0.1"
 description = "apiX - A framework to create MongoDB-backed applications with a GraphQL API web interface."
 authors = ["Danijel Kivaranovic <dan@apix.org>"]
+license = "MIT"
 readme = "README.md"
+keywords = ["graphql", "mongodb", "api", "starlette", "async"]
+homepage = "https://apix.org"
+repository = "https://github.com/ApixOrg/apix"
+documentation = "https://apix.org"
 
 [tool.poetry.dependencies]
 python = "^3.11"
