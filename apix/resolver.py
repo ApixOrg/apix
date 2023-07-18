@@ -26,17 +26,17 @@ class ApixResolver:
 
     def __init__(
             self,
-            function: Callable,
+            resolve: Callable,
             description: str = None,
     ):
 
-        self.function = function
+        self._resolve = resolve
         self.description = description
 
         self._app = None
 
     def __repr__(self) -> str:
-        return f'<{self.__class__.__name__}:{self.function.__name__}>'
+        return f'<{self.__class__.__name__}:{self.class_name}>'
 
     @cached_property
     def app(self) -> ApixApp | None:
@@ -48,15 +48,15 @@ class ApixResolver:
 
     @cached_property
     def class_name(self) -> str:
-        return gql_snake_to_camel(self.function.__name__, True)
+        return gql_snake_to_camel(self._resolve.__name__, True)
 
     @cached_property
     def field_name(self) -> str:
-        return gql_snake_to_camel(self.function.__name__, False)
+        return gql_snake_to_camel(self._resolve.__name__, False)
 
     @cached_property
     def signature(self):
-        return signature(self.function)
+        return signature(self._resolve)
 
     @cached_property
     def parameters(self) -> List[Parameter]:
@@ -117,7 +117,7 @@ class ApixResolver:
             kwargs['context'] = gql_resolve_info.context
 
         try:
-            result = self.function(**kwargs)
+            result = self._resolve(**kwargs)
 
             if isawaitable(result):
                 result = await result
