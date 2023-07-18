@@ -4,8 +4,7 @@ import inspect
 import json
 from datetime import datetime
 from functools import cached_property
-from inspect import isawaitable
-from typing import Awaitable, Callable, Dict, List, Type, TYPE_CHECKING
+from typing import Dict, List, Type, TYPE_CHECKING
 from uuid import uuid4
 
 from starlette.applications import Starlette, Request
@@ -19,7 +18,7 @@ from apix.resolver import *
 
 
 if TYPE_CHECKING:
-    from apix.document import *
+    from apix.authenticator import *
     from apix.error_handler import *
 
 
@@ -34,7 +33,7 @@ class ApixApp(Starlette):
             self,
             resolvers: List[ApixResolver],
             *,
-            authenticate: Callable[[str], ApixDocument | Awaitable[ApixDocument]] = None,
+            authenticator: ApixAuthenticator = None,
             error_handlers: List[ApixErrorHandler] = None,
             gql_path: str = '/graphql',
             include_extensions: bool = False,
@@ -48,7 +47,7 @@ class ApixApp(Starlette):
             error_handlers = []
 
         self.resolvers = resolvers
-        self._authenticate = authenticate
+        self.authenticator = authenticator
         self.error_handlers = error_handlers
         self.gql_path = gql_path
         self.include_extensions = include_extensions
@@ -89,41 +88,32 @@ class ApixApp(Starlette):
                 code='UNSPECIFIED',
             )
 
-    async def authenticate(self, token: str) -> ApixDocument | None:
+    async def gql_endpoint(self, request: Request) -> JSONResponse:
 
-        if self._authenticate:
+        context = ApixContext(
+            request_id=uuid4(),
+            requested_at=datetime.utcnow(),
+        )
+
+        auth_error = None
+        if self.authenticator:
+            token = request.headers.get('authorization', '')
+
             try:
-                requested_by = self._authenticate(token)
-                if isawaitable(requested_by):
-                    requested_by = await requested_by
-                return requested_by
-
+                context.requested_by = await self.authenticator.authenticate(token)
             except Exception as error:
-                raise self.handle_error(error)
+                auth_error = self.handle_error(error)
 
-    async def gql_endpoint(
-            self,
-            request: Request,
-    ) -> JSONResponse:
+        query = await request.body()
+        execution_result = await self.execute_query(query, context)
 
-        try:
-            requested_by = await self.authenticate(request.headers.get('authorization', ''))
-        except ApixError as error:
-            execution_result = ExecutionResult(errors=[error])
+        if auth_error:
+            if not execution_result.errors:
+                execution_result.errors = []
+            execution_result.errors.append(auth_error)
 
-        else:
-            context = ApixContext(
-                request_id=uuid4(),
-                requested_at=datetime.utcnow(),
-                requested_by=requested_by
-            )
-
-            query = await request.body()
-
-            execution_result = await self.execute_query(query, context)
-
-            if self.include_extensions:
-                execution_result.extensions = context.extensions
+        if self.include_extensions:
+            execution_result.extensions = context.extensions
 
         return JSONResponse(
             content=execution_result.formatted,
