@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "apiX"
-version = "0.0.3"
+version = "0.0.4"
 description = "apiX - A framework to create MongoDB-backed applications with a GraphQL API web interface."
 authors = ["Danijel Kivaranovic <dan@apix.org>"]
 license = "MIT"
