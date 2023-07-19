@@ -24,7 +24,7 @@ class ApixAuthenticator:
     ):
 
         if not isinstance(model, ApixModel):
-            raise TypeError("The argument 'model' must be of type 'ApixModel'")
+            raise TypeError("The argument 'model' must be an ApixModel")
 
         if not callable(authenticate):
             raise TypeError("The argument 'authenticate' must be a function")
