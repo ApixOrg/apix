@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from inspect import isawaitable
+from inspect import isawaitable, signature
 from typing import Awaitable, Callable, TYPE_CHECKING
+
+from apix.model import *
 
 
 if TYPE_CHECKING:
     from apix.document import *
-    from apix.model import *
 
 
 __all__ = [
@@ -16,9 +17,27 @@ __all__ = [
 
 class ApixAuthenticator:
 
-    def __init__(self,
-                 model: ApixModel,
-                 authenticate: Callable[[str], ApixDocument | Awaitable[ApixDocument] | None | Awaitable[None]]):
+    def __new__(
+            cls,
+            model: ApixModel,
+            authenticate: Callable[[str], ApixDocument | Awaitable[ApixDocument] | None | Awaitable[None]],
+    ):
+
+        if not isinstance(model, ApixModel):
+            raise TypeError("The argument 'model' must be of type 'ApixModel'")
+
+        if not callable(authenticate):
+            raise TypeError("The argument 'authenticate' must be a function")
+        elif len(signature(authenticate).parameters) != 1:
+            raise TypeError("The argument 'authenticate' must be a function with exactly one argument")
+
+        return super().__new__(cls)
+
+    def __init__(
+            self,
+            model: ApixModel,
+            authenticate: Callable[[str], ApixDocument | Awaitable[ApixDocument] | None | Awaitable[None]],
+    ):
 
         self.model = model
         self._authenticate = authenticate
@@ -37,4 +56,4 @@ class ApixAuthenticator:
             if isinstance(document, self.model):
                 return document # noqa
             else:
-                raise TypeError(f'The authenticator must return a document of type {self.model}')
+                raise TypeError(f"The 'authenticate' function must return a document of type {self.model}")
