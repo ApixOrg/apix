@@ -27,7 +27,7 @@ class ApixErrorHandler:
         if not callable(handle):
             raise TypeError("The argument 'handle' must be a function")
         elif len(signature(handle).parameters) != 1:
-            raise TypeError("The argument 'handle' must be a function with exactly one argument")
+            raise ValueError("The argument 'handle' must be a function with exactly one argument")
 
         return super().__new__(cls)
 
