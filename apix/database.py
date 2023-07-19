@@ -80,7 +80,7 @@ class ApixAsyncDatabase(type):
         if not isinstance(name, str):
             raise TypeError("The argument 'name' must be a string")
         elif not is_snake_case(name):
-            raise ValueError(f"The argument 'name' must be snake case.")
+            raise ValueError("The argument 'name' must be snake case")
 
         return super().__new__(mcs, mcs.__name__, (ApixAsyncCollection,), {})
 
