@@ -1,14 +1,15 @@
 import pytest
 
+from apix.database import *
 from apix.error import *
 from apix.error_handler import *
 
 
-def test_valid_apix_error():
+def test_valid_1_apix_error():
     ApixError('Some message', 'SOME_CODE')
 
 
-def test_valid_apix_error_without_code():
+def test_valid_2_apix_error():
     ApixError('Some message')
 
 
@@ -37,5 +38,47 @@ def test_invalid_handle_1_apix_error_handler():
 
 
 def test_invalid_handle_2_apix_error_handler():
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         ApixErrorHandler(ZeroDivisionError, lambda error1, error2: ApixError('Some message'))
+
+
+def test_valid_apix_database():
+    ApixDatabase('connection_string', 'database_name')
+
+
+def test_valid_apix_database():
+    ApixDatabase('connection_string', 'database_name')
+
+
+def test_invalid_host_apix_database():
+    with pytest.raises(TypeError):
+        ApixDatabase(0, 'database_name')
+
+
+def test_invalid_name_1_apix_database():
+    with pytest.raises(TypeError):
+        ApixDatabase('connection_string', 0)
+
+
+def test_invalid_name_2_apix_database():
+    with pytest.raises(ValueError):
+        ApixDatabase('connection_string', 'DatabaseName')
+
+
+def test_valid_apix_asyn_database():
+    ApixAsyncDatabase('connection_string', 'database_name')
+
+
+def test_invalid_host_apix_async_database():
+    with pytest.raises(TypeError):
+        ApixAsyncDatabase(0, 'database_name')
+
+
+def test_invalid_name_1_apix_async_database():
+    with pytest.raises(TypeError):
+        ApixAsyncDatabase('connection_string', 0)
+
+
+def test_invalid_name_2_apix_async_database():
+    with pytest.raises(ValueError):
+        ApixAsyncDatabase('connection_string', 'DatabaseName')
