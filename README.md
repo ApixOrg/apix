@@ -1,5 +1,5 @@
 
-[<img src="https://drive.google.com/uc?id=15TdAvzjAKX-IiyyzzAdgb76KWAR8EKRz" height="200">](https://apix.org)
+[<img src="https://www.apix.org/apix-dark-logo.png" height="200">](https://apix.org)
 
 
 
@@ -33,11 +33,11 @@ pip install git+https:://github.com/ApixOrg/apix.git
 
 ## Why use MongoDB and GraphQL?
 
-|                 | [<img src="https://drive.google.com/uc?id=1r3hrQhF0Ry8mH_7QzYr4VQaOUJhnXku5" height="50">](https://mongodb.com)                                    | [<img src="https://drive.google.com/uc?id=1E572-jLp5LAQXAqk-74tE3pi7xYEtc3j" height="50">](https://graphql.org)                                            |
-|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Description** | MongoDB is a schemaless database that stores arbitrary JSON objects (so called "Documents").                                                       | GraphQL is a flexible query language for APIs that allows you to specify exactly the fields which you want to request.                                     |
+|                 | [<img src="https://www.apix.org/mongodb-color-logo.png" height="50">](https://mongodb.com)                                                              | [<img src="https://www.apix.org/graphql-color-logo.png" height="50">](https://graphql.org)                                                                 |
+|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Description** | MongoDB is a schemaless database that stores arbitrary JSON objects (so called "Documents").                                                            | GraphQL is a flexible query language for APIs that allows you to specify exactly the fields which you want to request.                                     |
 | **Advantages**  | 1. Create document collections on-the-fly. <br/> 2. Documents can be nested and contain arrays. <br/> 3. Powerful data platform in the cloud available. | 1. Reduce the amount of data transmitted. <br/> 2. The requests are strictly type-safe. <br/>  3. Multiple resources can be collected in a single request. |
-| **Article**     | [Why use MongoDB?](https://www.mongodb.com/why-use-mongodb)                                                                                        | [Why use GraphQL?](https://www.apollographql.com/blog/graphql/basics/why-use-graphql)                                                                      |
+| **Article**     | [Why use MongoDB?](https://www.mongodb.com/why-use-mongodb)                                                                                             | [Why use GraphQL?](https://www.apollographql.com/blog/graphql/basics/why-use-graphql)                                                                      |
 
 ## Example App
 
