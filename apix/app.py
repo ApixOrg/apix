@@ -58,8 +58,6 @@ class ApixApp(Starlette):
 
         if not isinstance(gql_path, str):
             raise TypeError("The argument 'gql_path' must be a string")
-        elif not gql_path:
-            raise TypeError("The argument 'gql_path' must be a non-empty string")
 
         if not isinstance(include_extensions, bool):
             raise TypeError("The argument 'include_extensions' must be a boolean")
