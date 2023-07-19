@@ -4,22 +4,19 @@ import inspect
 import json
 from datetime import datetime
 from functools import cached_property
-from typing import Dict, List, Type, TYPE_CHECKING
+from typing import Dict, List, Type
 from uuid import uuid4
 
 from starlette.applications import Starlette, Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 
+from apix.authenticator import *
 from apix.context import *
 from apix.error import *
+from apix.error_handler import *
 from apix.gql import *
 from apix.resolver import *
-
-
-if TYPE_CHECKING:
-    from apix.authenticator import *
-    from apix.error_handler import *
 
 
 __all__ = [
@@ -28,6 +25,46 @@ __all__ = [
 
 
 class ApixApp(Starlette):
+
+    def __new__(
+            cls,
+            resolvers: List[ApixResolver],
+            *,
+            authenticator: ApixAuthenticator = None,
+            error_handlers: List[ApixErrorHandler] = None,
+            gql_path: str = '/graphql',
+            include_extensions: bool = False,
+            **kwargs,
+    ):
+
+        if not isinstance(resolvers, list):
+            raise TypeError("The argument 'resolvers' must be a list")
+        else:
+            for resolver in resolvers:
+                if not isinstance(resolver, ApixResolver):
+                    raise TypeError("Each element of the argument 'resolvers' must be an ApixResolver")
+
+        if authenticator is not None:
+            if not isinstance(authenticator, ApixAuthenticator):
+                raise TypeError("The argument 'authenticator' must be an ApixAuthenticator")
+
+        if error_handlers is not None:
+            if not isinstance(error_handlers, list):
+                raise TypeError("The argument 'error_handlers' must be a list")
+            else:
+                for error_handler in error_handlers:
+                    if not isinstance(error_handler, ApixErrorHandler):
+                        raise TypeError("Each element of the argument 'error_handlers' must be an ApixErrorHandler")
+
+        if not isinstance(gql_path, str):
+            raise TypeError("The argument 'gql_path' must be a string")
+        elif not gql_path:
+            raise TypeError("The argument 'gql_path' must be a non-empty string")
+
+        if not isinstance(include_extensions, bool):
+            raise TypeError("The argument 'include_extensions' must be a boolean")
+
+        return super().__new__(cls)
 
     def __init__(
             self,
