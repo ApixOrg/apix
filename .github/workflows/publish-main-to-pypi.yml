@@ -1,15 +1,15 @@
-name: Publish Development Branch to TestPyPI
+name: Publish Master Branch to PyPI
 on:
   push:
-    branches: ["development"]
+    branches: ["main"]
 
 jobs:
   test-pypi-publish:
-    name: Build and publish to TestPyPI
+    name: Build and publish to PyPI
     runs-on: ubuntu-latest
     environment:
       name: TestPyPI
-      url: https://test.pypi.org/project/apix
+      url: https://pypi.org/project/apix
     permissions:
       id-token: write
 
