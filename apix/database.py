@@ -24,8 +24,13 @@ class ApixDatabase(type):
             name: str,
     ):
 
-        if not is_snake_case(name):
-            raise ValueError(f"Name '{name}' must be snake case.")
+        if not isinstance(host, str):
+            raise TypeError("The argument 'host' must be a string")
+
+        if not isinstance(name, str):
+            raise TypeError("The argument 'name' must be a string")
+        elif not is_snake_case(name):
+            raise ValueError(f"The argument 'name' must be snake case.")
 
         return super().__new__(mcs, mcs.__name__, (ApixCollection,), {})
 
