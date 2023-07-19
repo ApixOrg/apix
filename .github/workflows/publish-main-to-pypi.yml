@@ -1,14 +1,14 @@
-name: Publish Master Branch to PyPI
+name: Publish Main Branch to PyPI
 on:
   push:
     branches: ["main"]
 
 jobs:
-  test-pypi-publish:
+  pypi-publish:
     name: Build and publish to PyPI
     runs-on: ubuntu-latest
     environment:
-      name: TestPyPI
+      name: PyPI
       url: https://pypi.org/project/apix
     permissions:
       id-token: write
@@ -31,8 +31,7 @@ jobs:
     - name: Build package
       run: python -m build
 
-    - name: Publish distribution to Test PyPI
+    - name: Publish distribution to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        repository-url: https://test.pypi.org/legacy/
+        password: ${{ secrets.PYPI_API_TOKEN }}
