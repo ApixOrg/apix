@@ -96,7 +96,7 @@ class ApixAttribute(type):
         if not isinstance(gql_filter_included, bool):
             raise TypeError("The argument 'gql_filter_included' must be a boolean")
 
-        if not isinstance(gql_update_included, bool):
+        if not isinstance(gql_order_included, bool):
             raise TypeError("The argument 'gql_order_included' must be a boolean")
 
         return super().__new__(mcs, gql_snake_to_camel(name, True), bases, {})
@@ -931,11 +931,13 @@ class ApixListAttribute(ApixAttribute):
             **kwargs,
     ):
 
-        if callable(attribute):
+        if isinstance(attribute, ApixAttribute):
+            pass
+        elif callable(attribute):
             if len(signature(attribute).parameters) > 0:
-                ValueError("The argument 'attribute' must be a function with exactly one argument")
-        elif not isinstance(attribute, ApixAttribute):
-            TypeError("The argument 'attribute' must be an ApixAttribute or a function")
+                raise ValueError("The argument 'attribute' must be a function with no argument")
+        else:
+            raise TypeError("The argument 'attribute' must be an ApixAttribute or a function")
 
         return super().__new__(mcs, name, (), **kwargs)
 
@@ -1141,15 +1143,15 @@ class ApixObjectAttribute(ApixAttribute):
             **kwargs,
     ):
 
-        if callable(attributes):
-            if len(signature(attributes).parameters) > 0:
-                ValueError("The argument 'attributes' must be a function with exactly one argument")
-        elif isinstance(attributes, list):
+        if isinstance(attributes, list):
             for attribute in attributes:
                 if not isinstance(attribute, ApixAttribute):
                     raise TypeError("Each element of the argument 'attributes' must be an ApixAttribute")
+        elif callable(attributes):
+            if len(signature(attributes).parameters) > 0:
+                raise ValueError("The argument 'attributes' must be a function with no argument")
         else:
-            TypeError("The argument 'attributes' must be a list or a function")
+            raise TypeError("The argument 'attributes' must be a list or a function")
 
         if gql_output_type_description is not None:
             if not isinstance(gql_output_type_description, str):
@@ -1255,11 +1257,13 @@ class ApixReferenceAttribute(ApixAttribute):
             **kwargs,
     ):
 
-        if callable(reference):
+        if reference.__class__.__name__ == 'ApixModel':   # workaround because the module apix.model cannot be imported due to circular dependencies
+            pass
+        elif callable(reference):
             if len(signature(reference).parameters) > 0:
-                ValueError("The argument 'reference' must be a function with exactly one argument")
-        elif type(reference).__name__ != 'ApixModel':   # workaround because the module apix.model cannot be imported due to circular dependencies
-            TypeError("The argument 'attribute' must be an ApixModel or a function")
+                raise ValueError("The argument 'reference' must be a function with no arguments")
+        else:
+            raise TypeError("The argument 'reference' must be an ApixModel or a function")
 
         return super().__new__(mcs, name, (ApixDocument,), **kwargs)
 
