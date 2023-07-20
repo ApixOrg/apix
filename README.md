@@ -22,7 +22,7 @@ and [graphql-core](https://graphql-core-3.readthedocs.io/en/latest/) for the Gra
 **apiX** is available on PyPI and can be installed with pip.
 
 ```commandline
-pip install apix
+pip install apix-core
 ```
 
 You can also directly install the latest version from Github.
