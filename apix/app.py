@@ -39,10 +39,9 @@ class ApixApp(Starlette):
 
         if not isinstance(resolvers, list):
             raise TypeError("The argument 'resolvers' must be a list")
-        else:
-            for resolver in resolvers:
-                if not isinstance(resolver, ApixResolver):
-                    raise TypeError("Each element of the argument 'resolvers' must be an ApixResolver")
+        for resolver in resolvers:
+            if not isinstance(resolver, ApixResolver):
+                raise TypeError("Each element of the argument 'resolvers' must be an ApixResolver")
 
         if authenticator is not None:
             if not isinstance(authenticator, ApixAuthenticator):
