@@ -9,6 +9,9 @@ keywords = ["graphql", "mongodb", "api", "starlette", "async"]
 homepage = "https://apix.org"
 repository = "https://github.com/ApixOrg/apix"
 documentation = "https://apix.org"
+packages = [
+    { include = "apix", from = "." }
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
