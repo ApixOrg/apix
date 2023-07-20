@@ -24,14 +24,29 @@ __all__ = [
 
 class ApixResolver:
 
+    def __new__(
+            cls,
+            resolve: Callable,
+            gql_resolver_field_description: str = None,
+    ):
+
+        if not callable(resolve):
+            raise TypeError("The argument 'attributes' must be a function")
+
+        if gql_resolver_field_description is not None:
+            if not isinstance(gql_resolver_field_description, str):
+                raise TypeError("The argument 'gql_resolver_field_description' must be a string")
+
+        return super().__new__(cls)
+
     def __init__(
             self,
             resolve: Callable,
-            description: str = None,
+            gql_resolver_field_description: str = None,
     ):
 
         self._resolve = resolve
-        self.description = description
+        self.gql_resolver_field_description = gql_resolver_field_description
 
         self._app = None
 
@@ -101,7 +116,7 @@ class ApixResolver:
             type_=self.gql_output_type,
             args=self.gql_arguments,
             resolve=self.resolve,
-            description=self.description,
+            description=self.gql_resolver_field_description,
         )
 
     async def resolve(
