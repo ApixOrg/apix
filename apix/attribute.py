@@ -824,18 +824,18 @@ class ApixEnumerationAttribute(ApixAttribute):
     def __new__(
             mcs,
             name: str,
-            values: List[ApixEnumerationValue],
+            enumeration_values: List[ApixEnumerationValue],
             *,
             gql_enumeration_type_description: str = None,
             **kwargs,
     ):
 
-        if not isinstance(values, list):
-            raise TypeError("The argument 'values' must be a list")
+        if not isinstance(enumeration_values, list):
+            raise TypeError("The argument 'enumeration_values' must be a list")
 
-        for value in values:
-            if not isinstance(value, ApixEnumerationValue):
-                raise TypeError("Each element of the argument 'values' must be an ApixEnumerationValue")
+        for enumeration_value in enumeration_values:
+            if not isinstance(enumeration_value, ApixEnumerationValue):
+                raise TypeError("Each element of the argument 'enumeration_values' must be an ApixEnumerationValue")
 
         if gql_enumeration_type_description is not None:
             if not isinstance(gql_enumeration_type_description, str):
@@ -846,7 +846,7 @@ class ApixEnumerationAttribute(ApixAttribute):
     def __init__(
             cls,
             name: str,
-            values: List[ApixEnumerationValue],
+            enumeration_values: List[ApixEnumerationValue],
             *,
             gql_enumeration_type_description: str = None,
             **kwargs,
@@ -854,18 +854,16 @@ class ApixEnumerationAttribute(ApixAttribute):
 
         super().__init__(name, (ApixEnumerationElement,), **kwargs)
 
-        cls.values = values
+        cls.enumeration_values = enumeration_values
         cls.gql_enumeration_type_description = gql_enumeration_type_description
         cls._kwargs = kwargs
 
-        cls.elements: List[ApixEnumerationElement] = []
-        cls.elements_by_value: Dict[Any, ApixEnumerationElement] = {}
+        cls.enumeration_elements: List[ApixEnumerationElement] = []
 
-        for value in cls.values:
-            element = cls(value.value)
-            cls.elements.append(element)
-            cls.elements_by_value[element.value] = element
-            setattr(cls, element.class_name, element)
+        for enumeration_value in cls.enumeration_values:
+            enumeration_element = cls(enumeration_value.value)
+            cls.enumeration_elements.append(enumeration_element)
+            setattr(cls, enumeration_element.class_name, enumeration_element)
 
     @cached_property
     def attribute(cls) -> ApixAttribute | None:
@@ -880,7 +878,7 @@ class ApixEnumerationAttribute(ApixAttribute):
 
         return {
             'name': cls._name,
-            'values': cls.values,
+            'enumeration_values': cls.enumeration_values,
             'gql_enumeration_type_description': cls.gql_enumeration_type_description,
             **cls._kwargs,
         }
@@ -906,19 +904,20 @@ class ApixEnumerationAttribute(ApixAttribute):
     ) -> Any:
 
         value = getattr(source, cls.name, None)
+
         if value is not None:
             return value.value
 
     @cached_property
-    def values_by_value(cls) -> Dict[Any, ApixEnumerationValue]:
-        return {value.value: value for value in cls.values}
+    def enumeration_values_by_value(cls) -> Dict[Any, ApixEnumerationValue]:
+        return {enumeration_value.value: enumeration_value for enumeration_value in cls.enumeration_values}
 
     @cached_property
     def gql_enumeration_type(cls) -> GraphQLEnumType:
 
         return GraphQLEnumType(
             name=cls.class_path_name,
-            values={value.class_name: value.gql_enumeration_value for value in cls.values},
+            values={enumeration_value.class_name: enumeration_value.gql_enumeration_value for enumeration_value in cls.enumeration_values},
             description=cls.gql_enumeration_type_description,
         )
 
