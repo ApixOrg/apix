@@ -6,6 +6,7 @@ from apix.enumeration import *
 from apix.error import *
 from apix.error_handler import *
 from apix.model import *
+from apix.resolver import *
 
 
 def test_valid_1_apix_error():
@@ -308,3 +309,21 @@ def test_invalid_gql_filter_type_description_apix_model():
 def test_invalid_gql_order_type_description_apix_model():
     with pytest.raises(TypeError):
         ApixModel('some_name', [ApixIdAttribute('some_id')], gql_order_type_description=0)
+
+
+def test_valid_1_apix_resolver():
+    ApixResolver(lambda x: x)
+
+
+def test_valid_2_apix_resolver():
+    ApixResolver(lambda x: x, gql_resolver_field_description='Some description')
+
+
+def test_invalid_resolve_apix_resolver():
+    with pytest.raises(TypeError):
+        ApixResolver(0)
+
+
+def test_invalid_gql_resolver_field_description_apix_resolver():
+    with pytest.raises(TypeError):
+        ApixResolver(lambda x: x, gql_resolver_field_description=0)

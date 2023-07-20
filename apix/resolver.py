@@ -27,6 +27,7 @@ class ApixResolver:
     def __new__(
             cls,
             resolve: Callable,
+            *,
             gql_resolver_field_description: str = None,
     ):
 
