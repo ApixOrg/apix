@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from inspect import signature
 from typing import Any, Callable, Dict, List, Tuple, Type, TYPE_CHECKING
 
 from apix.comparison_type import *
@@ -56,24 +57,47 @@ class ApixAttribute(type):
             gql_output_field_description: str = None,
             gql_input_included: bool = True,
             gql_input_nullable: bool = True,
-            gql_input_default: Any = None,
             gql_input_field_description: str = None,
             gql_update_included: bool = True,
-            gql_update_type_description: str = None,
-            gql_update_field_description: str = None,
-            gql_set_operation_included: bool = True,
-            gql_unset_operation_included: bool = True,
             gql_filter_included: bool = True,
-            gql_filter_type_description: str = None,
             gql_order_included: bool = True,
-            gql_order_type_description: str = None,
     ):
 
-        if not is_snake_case(name):
-            raise ValueError(f"Name '{name}' must be snake case.")
-
+        if not isinstance(name, str):
+            raise TypeError("The argument 'name' must be a string")
+        elif not is_snake_case(name):
+            raise ValueError("The argument 'name' must be snake case")
         elif name in mcs.reserved_names:
-            raise ValueError(f"Name '{name}' is a reserved name.")
+            raise ValueError("The argument 'name' must be a reserved name")
+
+        if not isinstance(gql_output_included, bool):
+            raise TypeError("The argument 'gql_output_included' must be a boolean")
+
+        if not isinstance(gql_output_nullable, bool):
+            raise TypeError("The argument 'gql_output_nullable' must be a boolean")
+
+        if gql_output_field_description is not None:
+            if not isinstance(gql_output_field_description, str):
+                raise TypeError("The argument 'gql_output_field_description' must be a string")
+
+        if not isinstance(gql_input_included, bool):
+            raise TypeError("The argument 'gql_input_included' must be a boolean")
+
+        if not isinstance(gql_input_nullable, bool):
+            raise TypeError("The argument 'gql_input_nullable' must be a boolean")
+
+        if gql_input_field_description is not None:
+            if not isinstance(gql_input_field_description, str):
+                raise TypeError("The argument 'gql_input_field_description' must be a string")
+
+        if not isinstance(gql_update_included, bool):
+            raise TypeError("The argument 'gql_update_included' must be a boolean")
+
+        if not isinstance(gql_filter_included, bool):
+            raise TypeError("The argument 'gql_filter_included' must be a boolean")
+
+        if not isinstance(gql_update_included, bool):
+            raise TypeError("The argument 'gql_order_included' must be a boolean")
 
         return super().__new__(mcs, gql_snake_to_camel(name, True), bases, {})
 
@@ -87,17 +111,10 @@ class ApixAttribute(type):
             gql_output_field_description: str = None,
             gql_input_included: bool = True,
             gql_input_nullable: bool = True,
-            gql_input_default: Any = None,
             gql_input_field_description: str = None,
             gql_update_included: bool = True,
-            gql_update_type_description: str = None,
-            gql_update_field_description: str = None,
-            gql_set_operation_included: bool = True,
-            gql_unset_operation_included: bool = True,
             gql_filter_included: bool = True,
-            gql_filter_type_description: str = None,
             gql_order_included: bool = True,
-            gql_order_type_description: str = None,
     ):
 
         super().__init__(gql_snake_to_camel(name, True), bases, {})
@@ -111,17 +128,10 @@ class ApixAttribute(type):
         cls.gql_output_field_description = gql_output_field_description
         cls.gql_input_included = gql_input_included
         cls.gql_input_nullable = gql_input_nullable
-        cls.gql_input_default = gql_input_default
         cls.gql_input_field_description = gql_input_field_description
         cls.gql_update_included = gql_update_included
-        cls.gql_update_type_description = gql_update_type_description
-        cls.gql_update_field_description = gql_update_field_description
-        cls.gql_set_operation_included = gql_set_operation_included
-        cls.gql_unset_operation_included = gql_unset_operation_included
         cls.gql_filter_included = gql_filter_included
-        cls.gql_filter_type_description = gql_filter_type_description
         cls.gql_order_included = gql_order_included
-        cls.gql_order_type_description = gql_order_type_description
 
         cls.IsNull = ApixIsNullComparisonType(cls)
         cls.Equal = ApixEqualComparisonType(cls)
@@ -374,7 +384,6 @@ class ApixAttribute(type):
         return GraphQLInputField(
             type_=cls.gql_wrapped_input_type,
             description=cls.gql_input_field_description,
-            default_value=cls.gql_input_default,
             out_name=cls.name,
         )
 
@@ -815,11 +824,22 @@ class ApixEnumerationAttribute(ApixAttribute):
     def __new__(
             mcs,
             name: str,
-            values: List[ApixEnumerationElement],
+            values: List[ApixEnumerationValue],
             *,
             gql_enumeration_type_description: str = None,
             **kwargs,
     ):
+
+        if not isinstance(values, list):
+            raise TypeError("The argument 'values' must be a list")
+
+        for value in values:
+            if not isinstance(value, ApixEnumerationValue):
+                raise TypeError("Each element of the argument 'values' must be an ApixEnumerationValue")
+
+        if gql_enumeration_type_description is not None:
+            if not isinstance(gql_enumeration_type_description, str):
+                raise TypeError("The argument 'gql_enumeration_type_description' must be a string")
 
         return super().__new__(mcs, name, (ApixEnumerationElement,), **kwargs)
 
@@ -911,6 +931,12 @@ class ApixListAttribute(ApixAttribute):
             attribute: ApixAttribute | Callable[[], ApixAttribute],
             **kwargs,
     ):
+
+        if callable(attribute):
+            if len(signature(attribute).parameters) > 0:
+                ValueError("The argument 'attribute' must be a function with exactly one argument")
+        elif not isinstance(attribute, ApixAttribute):
+            TypeError("The argument 'attribute' must be an ApixAttribute or a function")
 
         return super().__new__(mcs, name, (), **kwargs)
 
@@ -1116,6 +1142,24 @@ class ApixObjectAttribute(ApixAttribute):
             **kwargs,
     ):
 
+        if callable(attributes):
+            if len(signature(attributes).parameters) > 0:
+                ValueError("The argument 'attributes' must be a function with exactly one argument")
+        elif isinstance(attributes, list):
+            for attribute in attributes:
+                if not isinstance(attribute, ApixAttribute):
+                    raise TypeError("Each element of the argument 'attributes' must be an ApixAttribute")
+        else:
+            TypeError("The argument 'attributes' must be a list or a function")
+
+        if gql_output_type_description is not None:
+            if not isinstance(gql_output_type_description, str):
+                raise TypeError("The argument 'gql_output_type_description' must be a string")
+
+        if gql_input_type_description is not None:
+            if not isinstance(gql_input_type_description, str):
+                raise TypeError("The argument 'gql_input_type_description' must be a string")
+
         return super().__new__(mcs, name, (ApixDocument,), **kwargs)
 
     def __init__(
@@ -1211,6 +1255,12 @@ class ApixReferenceAttribute(ApixAttribute):
             reference: ApixModel | Callable[[], ApixModel],
             **kwargs,
     ):
+
+        if callable(reference):
+            if len(signature(reference).parameters) > 0:
+                ValueError("The argument 'reference' must be a function with exactly one argument")
+        elif type(reference).__name__ != 'ApixModel':   # workaround because the module apix.model cannot be imported due to circular dependencies
+            TypeError("The argument 'attribute' must be an ApixModel or a function")
 
         return super().__new__(mcs, name, (ApixDocument,), **kwargs)
 
