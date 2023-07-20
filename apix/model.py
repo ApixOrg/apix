@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from inspect import signature
 from typing import Any, Callable, Dict, List, TYPE_CHECKING
 
 from apix.attribute import *
@@ -31,16 +32,46 @@ class ApixModel(type):
             attributes: List[ApixAttribute] | Callable[[], List[ApixAttribute]],
             *,
             gql_output_type_description: str = None,
-            gql_output_field_description: str = None,
             gql_input_type_description: str = None,
-            gql_input_field_description: str = None,
             gql_update_type_description: str = None,
             gql_filter_type_description: str = None,
             gql_order_type_description: str = None,
     ):
 
-        if not is_snake_case(name):
-            raise ValueError(f"Name '{name}' must be snake case.")
+        if not isinstance(name, str):
+            raise TypeError("The argument 'name' must be a string")
+        elif not is_snake_case(name):
+            raise ValueError("The argument 'name' must be snake case")
+
+        if isinstance(attributes, list):
+            for attribute in attributes:
+                if not isinstance(attribute, ApixAttribute):
+                    raise TypeError("Each element of the argument 'attributes' must be an ApixAttribute")
+        elif callable(attributes):
+            if len(signature(attributes).parameters) > 0:
+                raise ValueError("The argument 'attributes' must be a function with no argument")
+        else:
+            raise TypeError("The argument 'attributes' must be a list or a function")
+
+        if gql_output_type_description is not None:
+            if not isinstance(gql_output_type_description, str):
+                raise TypeError("The argument 'gql_output_type_description' must be a string")
+
+        if gql_input_type_description is not None:
+            if not isinstance(gql_input_type_description, str):
+                raise TypeError("The argument 'gql_input_type_description' must be a string")
+
+        if gql_update_type_description is not None:
+            if not isinstance(gql_update_type_description, str):
+                raise TypeError("The argument 'gql_update_type_description' must be a string")
+
+        if gql_filter_type_description is not None:
+            if not isinstance(gql_filter_type_description, str):
+                raise TypeError("The argument 'gql_filter_type_description' must be a string")
+
+        if gql_order_type_description is not None:
+            if not isinstance(gql_order_type_description, str):
+                raise TypeError("The argument 'gql_order_type_description' must be a string")
 
         return super().__new__(mcs, mcs.__name__, (ApixDocument,), {})
 
@@ -50,9 +81,7 @@ class ApixModel(type):
             attributes: List[ApixAttribute] | Callable[[], List[ApixAttribute]],
             *,
             gql_output_type_description: str = None,
-            gql_output_field_description: str = None,
             gql_input_type_description: str = None,
-            gql_input_field_description: str = None,
             gql_update_type_description: str = None,
             gql_filter_type_description: str = None,
             gql_order_type_description: str = None,
@@ -63,9 +92,7 @@ class ApixModel(type):
         cls.name = name
         cls._attributes = attributes
         cls.gql_output_type_description = gql_output_type_description
-        cls.gql_output_field_description = gql_output_field_description
         cls.gql_input_type_description = gql_input_type_description
-        cls.gql_input_field_description = gql_input_field_description
         cls.gql_update_type_description = gql_update_type_description
         cls.gql_filter_type_description = gql_filter_type_description
         cls.gql_order_type_description = gql_order_type_description
