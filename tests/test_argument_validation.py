@@ -255,3 +255,56 @@ def test_invalid_reference_1_apix_reference_attribute():
 def test_invalid_reference_2_apix_reference_attribute():
     with pytest.raises(ValueError):
         ApixReferenceAttribute('some_list', lambda x: ApixModel('some_model', []))
+
+
+def test_valid_1_apix_model():
+    ApixModel('some_model', [ApixIdAttribute('some_id')])
+
+
+def test_valid_2_apix_model():
+    ApixModel('some_model', lambda: [ApixIdAttribute('some_id')])
+
+
+def test_invalid_name_1_apix_model():
+    with pytest.raises(TypeError):
+        ApixModel(0, [ApixIdAttribute('some_id')])
+
+
+def test_invalid_name_2_apix_model():
+    with pytest.raises(ValueError):
+        ApixModel('SomeName', [ApixIdAttribute('some_id')])
+
+
+def test_invalid_attributes_1_apix_model():
+    with pytest.raises(TypeError):
+        ApixModel('some_model', ['some_id'])
+
+
+def test_invalid_attributes_2_apix_model():
+    with pytest.raises(ValueError):
+        ApixModel('some_model', lambda x: [ApixIdAttribute('some_id')])
+
+
+def test_invalid_gql_output_type_description_apix_model():
+    with pytest.raises(TypeError):
+        ApixModel('some_name', [ApixIdAttribute('some_id')], gql_output_type_description=0)
+
+
+def test_invalid_gql_input_type_description_apix_model():
+    with pytest.raises(TypeError):
+        ApixModel('some_name', [ApixIdAttribute('some_id')], gql_input_type_description=0)
+
+
+def test_invalid_gql_update_type_description_apix_model():
+    with pytest.raises(TypeError):
+        ApixModel('some_name', [ApixIdAttribute('some_id')], gql_update_type_description=0)
+
+
+def test_invalid_gql_filter_type_description_apix_model():
+    with pytest.raises(TypeError):
+        ApixModel('some_name', [ApixIdAttribute('some_id')], gql_filter_type_description=0)
+
+
+def test_invalid_gql_order_type_description_apix_model():
+    with pytest.raises(TypeError):
+        ApixModel('some_name', [ApixIdAttribute('some_id')], gql_order_type_description=0)
