@@ -1,6 +1,7 @@
 import pytest
 
 from apix.database import *
+from apix.enumeration import *
 from apix.error import *
 from apix.error_handler import *
 
@@ -82,3 +83,31 @@ def test_invalid_name_1_apix_async_database():
 def test_invalid_name_2_apix_async_database():
     with pytest.raises(ValueError):
         ApixAsyncDatabase('connection_string', 'DatabaseName')
+
+
+def test_valid_1_apix_enumeration_value():
+    ApixEnumerationValue('some_name', 0, 'some description')
+
+
+def test_valid_2_apix_enumeration_value():
+    ApixEnumerationValue('some_name', 0)
+
+
+def test_invalid_name_1_apix_enumeration_value():
+    with pytest.raises(TypeError):
+        ApixEnumerationValue(0, 0)
+
+
+def test_invalid_name_2_apix_enumeration_value():
+    with pytest.raises(ValueError):
+        ApixEnumerationValue('Some name', 0)
+
+
+def test_invalid_value_apix_enumeration_value():
+    with pytest.raises(TypeError):
+        ApixEnumerationValue('some_name', 1.1)
+
+
+def test_invalid_description_apix_enumeration_value():
+    with pytest.raises(TypeError):
+        ApixEnumerationValue('some_name', 0, 0)
