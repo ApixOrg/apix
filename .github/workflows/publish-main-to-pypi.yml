@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: PyPI
-      url: https://pypi.org/project/apix
+      url: https://pypi.org/project/apix-core
     permissions:
       id-token: write
 
