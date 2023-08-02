@@ -4,6 +4,7 @@ from inspect import isawaitable, signature
 from typing import Awaitable, Callable, TYPE_CHECKING
 
 from apix.model import *
+from apix.token import *
 
 
 if TYPE_CHECKING:
@@ -20,7 +21,7 @@ class ApixAuthenticator:
     def __new__(
             cls,
             model: ApixModel,
-            authenticate: Callable[[str], ApixDocument | Awaitable[ApixDocument] | None | Awaitable[None]],
+            authenticate: Callable[[ApixToken], ApixDocument | Awaitable[ApixDocument] | None | Awaitable[None]],
     ):
 
         if not isinstance(model, ApixModel):
@@ -36,7 +37,7 @@ class ApixAuthenticator:
     def __init__(
             self,
             model: ApixModel,
-            authenticate: Callable[[str], ApixDocument | Awaitable[ApixDocument] | None | Awaitable[None]],
+            authenticate: Callable[[ApixToken], ApixDocument | Awaitable[ApixDocument] | None | Awaitable[None]],
     ):
 
         self.model = model
@@ -45,7 +46,7 @@ class ApixAuthenticator:
     def __repr__(self) -> str:
         return f'<{self.__class__.__name__}:{self.model.class_name}>'
 
-    async def authenticate(self, token: str) -> ApixDocument | None:
+    async def authenticate(self, token: ApixToken) -> ApixDocument | None:
 
         document = self._authenticate(token)
 

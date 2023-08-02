@@ -17,6 +17,7 @@ from apix.error import *
 from apix.error_handler import *
 from apix.gql import *
 from apix.resolver import *
+from apix.token import *
 
 
 __all__ = [
@@ -130,13 +131,16 @@ class ApixApp(Starlette):
         )
 
         auth_error = None
-        if self.authenticator:
-            token = request.headers.get('authorization', '')
 
-            try:
-                context.requested_by = await self.authenticator.authenticate(token)
-            except Exception as error:
-                auth_error = self.handle_error(error)
+        if self.authenticator:
+
+            token = ApixToken.from_string(request.headers.get('authorization', ''))
+
+            if token:
+                try:
+                    context.requested_by = await self.authenticator.authenticate(token)
+                except Exception as error:
+                    auth_error = self.handle_error(error)
 
         query = await request.body()
         execution_result = await self.execute_query(query, context)
