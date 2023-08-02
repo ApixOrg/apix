@@ -580,6 +580,7 @@ class ApixScalarAttribute(ApixAttribute):
     def __new__(
             mcs,
             name: str,
+            scalar_type: Type[ApixScalar],
             **kwargs,
     ):
         return super().__new__(mcs, name, (), **kwargs)
@@ -587,22 +588,16 @@ class ApixScalarAttribute(ApixAttribute):
     def __init__(
             cls,
             name: str,
+            scalar_type: Type[ApixScalar],
             **kwargs,
     ):
 
         super().__init__(name, (), **kwargs)
+        cls.scalar_type = scalar_type
         cls._kwargs = kwargs
 
-    def __call__(
-            cls,
-            value: Any,
-    ) -> ApixScalar:
-
-        raise NotImplementedError
-
-    @cached_property
-    def gql_scalar_type(cls) -> GraphQLScalarType:
-        raise NotImplementedError
+    def __call__(cls, value: Any) -> Any:
+        return cls.scalar_type(value)
 
     @cached_property
     def attribute(cls) -> ApixAttribute | None:
@@ -622,11 +617,11 @@ class ApixScalarAttribute(ApixAttribute):
 
     @cached_property
     def gql_input_type(cls) -> GraphQLScalarType:
-        return cls.gql_scalar_type
+        return cls.scalar_type.gql_scalar_type
 
     @cached_property
     def gql_output_type(cls) -> GraphQLScalarType:
-        return cls.gql_scalar_type
+        return cls.scalar_type.gql_scalar_type
 
     def from_value(cls, value: Any) -> ApixScalar:
         return cls(value)
@@ -637,155 +632,57 @@ class ApixScalarAttribute(ApixAttribute):
 
 class ApixIdAttribute(ApixScalarAttribute):
 
-    def __new__(
-            mcs,
-            name: str,
-            **kwargs,
-    ):
-        return super().__new__(mcs, name, **kwargs)
+    def __new__(mcs, name: str, **kwargs):
+        return super().__new__(mcs, name, ApixId, **kwargs)
 
-    def __init__(
-            cls,
-            name: str,
-            **kwargs,
-    ):
-        super().__init__(name, **kwargs)
-
-    def __call__(
-            cls,
-            value: Any,
-    ) -> ApixScalar:
-
-        return ApixId(value)
-
-    @cached_property
-    def gql_scalar_type(cls) -> GraphQLScalarType:
-        return GraphQLID
+    def __init__(cls, name: str, **kwargs):
+        super().__init__(name, ApixId, **kwargs)
 
 
 class ApixStringAttribute(ApixScalarAttribute):
 
-    def __new__(
-            mcs,
-            name: str,
-            **kwargs,
-    ):
-        return super().__new__(mcs, name, **kwargs)
+    def __new__(mcs, name: str, **kwargs):
+        return super().__new__(mcs, name, ApixString, **kwargs)
 
-    def __init__(
-            cls,
-            name: str,
-            **kwargs,
-    ):
-        super().__init__(name, **kwargs)
-
-    def __call__(
-            cls,
-            value: Any,
-    ) -> ApixScalar:
-
-        return ApixString(value)
-
-    @cached_property
-    def gql_scalar_type(cls) -> GraphQLScalarType:
-        return GraphQLString
+    def __init__(cls, name: str, **kwargs):
+        super().__init__(name, ApixString, **kwargs)
 
 
 class ApixIntegerAttribute(ApixScalarAttribute):
 
-    def __new__(
-            mcs,
-            name: str,
-            **kwargs,
-    ):
-        return super().__new__(mcs, name, **kwargs)
+    def __new__(mcs, name: str, **kwargs):
+        return super().__new__(mcs, name, ApixInteger, **kwargs)
 
-    def __init__(
-            cls,
-            name: str,
-            **kwargs,
-    ):
-        super().__init__(name, **kwargs)
+    def __init__(cls, name: str, **kwargs):
+        super().__init__(name, ApixInteger, **kwargs)
 
         cls.Increment = ApixIncrementOperationType(cls)
         cls.Multiply = ApixMultiplyOperationType(cls)
         cls.Min = ApixMinOperationType(cls)
         cls.Max = ApixMaxOperationType(cls)
-
-    def __call__(
-            cls,
-            value: Any,
-    ) -> ApixScalar:
-
-        return ApixInteger(value)
-
-    @cached_property
-    def gql_scalar_type(cls) -> GraphQLScalarType:
-        return GraphQLInt
 
 
 class ApixFloatAttribute(ApixScalarAttribute):
 
-    def __new__(
-            mcs,
-            name: str,
-            **kwargs,
-    ):
-        return super().__new__(mcs, name, **kwargs)
+    def __new__(mcs, name: str, **kwargs):
+        return super().__new__(mcs, name, ApixFloat, **kwargs)
 
-    def __init__(
-            cls,
-            name: str,
-            **kwargs,
-    ):
-        super().__init__(name, **kwargs)
+    def __init__(cls, name: str, **kwargs):
+        super().__init__(name, ApixFloat, **kwargs)
 
         cls.Increment = ApixIncrementOperationType(cls)
         cls.Multiply = ApixMultiplyOperationType(cls)
         cls.Min = ApixMinOperationType(cls)
         cls.Max = ApixMaxOperationType(cls)
 
-    def __call__(
-            cls,
-            value: Any,
-    ) -> ApixScalar:
-
-        return ApixFloat(value)
-
-    @cached_property
-    def gql_scalar_type(cls) -> GraphQLScalarType:
-        return GraphQLFloat
-
 
 class ApixBooleanAttribute(ApixScalarAttribute):
 
-    def __new__(
-            mcs,
-            name: str,
-            **kwargs,
-    ):
-        return super().__new__(mcs, name, **kwargs)
+    def __new__(mcs, name: str, **kwargs):
+        return super().__new__(mcs, name, ApixBoolean, **kwargs)
 
-    def __init__(
-            cls,
-            name: str,
-            **kwargs,
-    ):
-        super().__init__(name, **kwargs)
-
-    def __call__(
-            cls,
-            value: Any,
-    ) -> ApixScalar:
-
-        return ApixBoolean(value)
-
-    def from_value(cls, value: Any) -> ApixBoolean:
-        return cls(value)
-
-    @cached_property
-    def gql_scalar_type(cls) -> GraphQLScalarType:
-        return GraphQLBoolean
+    def __init__(cls, name: str, **kwargs):
+        super().__init__(name, ApixBoolean, **kwargs)
 
 
 class ApixDateTimeAttribute(ApixScalarAttribute):
@@ -795,28 +692,14 @@ class ApixDateTimeAttribute(ApixScalarAttribute):
             name: str,
             **kwargs,
     ):
-        return super().__new__(mcs, name, **kwargs)
+        return super().__new__(mcs, name, ApixDateTime, **kwargs)
 
     def __init__(
             cls,
             name: str,
             **kwargs,
     ):
-        super().__init__(name, **kwargs)
-
-    def __call__(
-            cls,
-            value: Any,
-    ) -> ApixScalar:
-
-        if isinstance(value, ApixDateTime):
-            return value
-        else:
-            return ApixDateTime.fromisoformat(value)
-
-    @cached_property
-    def gql_scalar_type(cls) -> GraphQLScalarType:
-        return GraphQLDateTime
+        super().__init__(name, ApixDateTime, **kwargs)
 
 
 class ApixEnumerationAttribute(ApixAttribute):
