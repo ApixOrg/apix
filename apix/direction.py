@@ -27,7 +27,7 @@ class ApixDirection:
 
     @property
     def value_string(self) -> str:
-        return 'asc' if self.value else 'desc'
+        return 'asc' if self.value == 1 else 'desc'
 
     @property
     def order(self) -> List[Tuple]:
