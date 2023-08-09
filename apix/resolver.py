@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-from datetime import datetime
 from inspect import isawaitable, signature, Parameter
 from types import UnionType
 from typing import Any, Callable, Dict, List, Optional, Union, get_origin, get_args, TYPE_CHECKING
-
-from bson import ObjectId
 
 from apix.gql import *
 from apix.utils import *
@@ -28,11 +25,21 @@ class ApixResolver:
             cls,
             resolve: Callable,
             *,
+            require_authentication: bool = False,
+            return_context: bool = False,
             gql_resolver_field_description: str = None,
     ):
 
         if not callable(resolve):
-            raise TypeError("The argument 'attributes' must be a function")
+            raise TypeError("The argument 'resolve' must be a function")
+        elif not is_snake_case(resolve.__name__):
+            raise ValueError("The function name of argument 'resolve' must be snake case")
+
+        if not isinstance(require_authentication, bool):
+            raise TypeError("The argument 'require_authentication' must be a boolean")
+
+        if not isinstance(return_context, bool):
+            raise TypeError("The argument 'return_context' must be a boolean")
 
         if gql_resolver_field_description is not None:
             if not isinstance(gql_resolver_field_description, str):
@@ -43,10 +50,15 @@ class ApixResolver:
     def __init__(
             self,
             resolve: Callable,
+            *,
+            require_authentication: bool = False,
+            return_context: bool = False,
             gql_resolver_field_description: str = None,
     ):
 
         self._resolve = resolve
+        self.require_authentication = require_authentication
+        self.return_context = return_context
         self.gql_resolver_field_description = gql_resolver_field_description
 
         self._app = None
@@ -196,18 +208,6 @@ class ApixResolver:
 
         if self.is_list_type(annotation):
             return GraphQLList(self.map_annotation_to_gql_output_type(get_args(annotation)[0]))
-        elif annotation is ObjectId:
-            return GraphQLID
-        elif annotation is str:
-            return GraphQLString
-        elif annotation is int:
-            return GraphQLInt
-        elif annotation is float:
-            return GraphQLFloat
-        elif annotation is bool:
-            return GraphQLBoolean
-        elif annotation is datetime:
-            return GraphQLDateTime
         elif hasattr(annotation, 'gql_output_type'):
             return annotation.gql_output_type
         else:
@@ -243,21 +243,8 @@ class ApixResolver:
             self,
             annotation: Any,
     ) -> GraphQLInputType:
-
         if self.is_list_type(annotation):
             return GraphQLList(self.map_annotation_to_gql_input_type(get_args(annotation)[0]))
-        elif annotation is ObjectId:
-            return GraphQLID
-        elif annotation is str:
-            return GraphQLString
-        elif annotation is int:
-            return GraphQLInt
-        elif annotation is float:
-            return GraphQLFloat
-        elif annotation is bool:
-            return GraphQLBoolean
-        elif annotation is datetime:
-            return GraphQLDateTime
         elif hasattr(annotation, 'gql_input_type'):
             return annotation.gql_input_type
         else:

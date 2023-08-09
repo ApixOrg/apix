@@ -11,7 +11,6 @@ if TYPE_CHECKING:
     from apix.model import *
 
 
-
 __all__ = [
     'ApixUpdateType',
 ]

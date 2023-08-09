@@ -146,7 +146,7 @@ class ApixAttribute(type):
         cls.Set = ApixSetOperationType(cls)
         cls.Unset = ApixUnsetOperationType(cls)
 
-        cls.Direction: Type[ApixDirection] = ApixDirectionType(cls) # noqa
+        cls.Direction = ApixDirectionType(cls)
 
         cls._model = None
         cls._parent = None

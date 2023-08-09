@@ -13,7 +13,7 @@ class ApixError(GraphQLError):
     def __new__(
             cls,
             message: str,
-            code: str = 'UNSPECIFIED',
+            code: str,
     ):
 
         if not isinstance(message, str):
@@ -27,7 +27,7 @@ class ApixError(GraphQLError):
     def __init__(
             self,
             message: str,
-            code: str = 'UNSPECIFIED',
+            code: str,
     ):
 
         super(ApixError, self).__init__(message, extensions={'code': code})

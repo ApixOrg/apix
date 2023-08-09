@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 __all__ = [
-    'ApixDirectionType'
+    'ApixDirectionType',
 ]
 
 

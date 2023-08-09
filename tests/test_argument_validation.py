@@ -9,12 +9,8 @@ from apix.model import *
 from apix.resolver import *
 
 
-def test_valid_1_apix_error():
+def test_valid_apix_error():
     ApixError('Some message', 'SOME_CODE')
-
-
-def test_valid_2_apix_error():
-    ApixError('Some message')
 
 
 def test_invalid_message_apix_error():
@@ -312,11 +308,19 @@ def test_invalid_gql_order_type_description_apix_model():
 
 
 def test_valid_1_apix_resolver():
-    ApixResolver(lambda x: x)
+
+    def some_function():
+        pass
+
+    ApixResolver(some_function)
 
 
 def test_valid_2_apix_resolver():
-    ApixResolver(lambda x: x, gql_resolver_field_description='Some description')
+
+    def some_function():
+        pass
+
+    ApixResolver(some_function, gql_resolver_field_description='Some description')
 
 
 def test_invalid_resolve_apix_resolver():
@@ -326,4 +330,7 @@ def test_invalid_resolve_apix_resolver():
 
 def test_invalid_gql_resolver_field_description_apix_resolver():
     with pytest.raises(TypeError):
-        ApixResolver(lambda x: x, gql_resolver_field_description=0)
+        def some_function():
+            pass
+
+        ApixResolver(some_function, gql_resolver_field_description=0)

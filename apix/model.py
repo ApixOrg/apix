@@ -89,7 +89,7 @@ class ApixModel(type):
 
         super().__init__(cls.__name__, (ApixDocument,), {})
 
-        cls.name = name
+        cls._name = name
         cls._attributes = attributes
         cls.gql_output_type_description = gql_output_type_description
         cls.gql_input_type_description = gql_input_type_description
@@ -117,6 +117,10 @@ class ApixModel(type):
                 setattr(cls, attribute.class_name, attribute)
 
         return super().__getattribute__(key)
+
+    @cached_property
+    def name(cls) -> str:
+        return cls._name
 
     @cached_property
     def projection(cls) -> ApixSelectType:

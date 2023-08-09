@@ -48,7 +48,7 @@ class ApixUpdateOperator(Enum):
 
 class ApixDirectionOperator(Enum):
     ASCENDING = 1
-    DESCENDING = -1
+    DESCENDING = 0
 
 
 ApixLogicalOperatorEnumType = GraphQLEnumType(

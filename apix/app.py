@@ -29,20 +29,20 @@ class ApixApp(Starlette):
 
     def __new__(
             cls,
-            resolvers: List[ApixResolver],
             *,
+            resolvers: List[ApixResolver] = None,
             authenticator: ApixAuthenticator = None,
             error_handlers: List[ApixErrorHandler] = None,
-            gql_path: str = '/graphql',
-            include_extensions: bool = False,
             **kwargs,
     ):
 
-        if not isinstance(resolvers, list):
-            raise TypeError("The argument 'resolvers' must be a list")
-        for resolver in resolvers:
-            if not isinstance(resolver, ApixResolver):
-                raise TypeError("Each element of the argument 'resolvers' must be an ApixResolver")
+        if resolvers is not None:
+            if not isinstance(resolvers, list):
+                raise TypeError("The argument 'resolvers' must be a list")
+            else:
+                for resolver in resolvers:
+                    if not isinstance(resolver, ApixResolver):
+                        raise TypeError("Each element of the argument 'resolvers' must be an ApixResolver")
 
         if authenticator is not None:
             if not isinstance(authenticator, ApixAuthenticator):
@@ -56,36 +56,29 @@ class ApixApp(Starlette):
                     if not isinstance(error_handler, ApixErrorHandler):
                         raise TypeError("Each element of the argument 'error_handlers' must be an ApixErrorHandler")
 
-        if not isinstance(gql_path, str):
-            raise TypeError("The argument 'gql_path' must be a string")
-
-        if not isinstance(include_extensions, bool):
-            raise TypeError("The argument 'include_extensions' must be a boolean")
-
         return super().__new__(cls)
 
     def __init__(
             self,
-            resolvers: List[ApixResolver],
             *,
+            resolvers: List[ApixResolver] = None,
             authenticator: ApixAuthenticator = None,
             error_handlers: List[ApixErrorHandler] = None,
-            gql_path: str = '/graphql',
-            include_extensions: bool = False,
             **kwargs,
     ):
 
-        for resolver in resolvers:
-            resolver._app = self
+        if not resolvers:
+            resolvers = []
 
         if not error_handlers:
             error_handlers = []
 
+        for resolver in resolvers:
+            resolver._app = self
+
         self.resolvers = resolvers
         self.authenticator = authenticator
         self.error_handlers = error_handlers
-        self.gql_path = gql_path
-        self.include_extensions = include_extensions
 
         if 'routes' not in kwargs:
             kwargs['routes'] = []
@@ -98,7 +91,7 @@ class ApixApp(Starlette):
     def gql_route(self) -> Route:
 
         return Route(
-            path=self.gql_path,
+            path='/graphql',
             endpoint=self.gql_endpoint,
             methods=['POST'],
         )
@@ -149,9 +142,6 @@ class ApixApp(Starlette):
             if not execution_result.errors:
                 execution_result.errors = []
             execution_result.errors.append(auth_error)
-
-        if self.include_extensions:
-            execution_result.extensions = context.extensions
 
         return JSONResponse(
             content=execution_result.formatted,

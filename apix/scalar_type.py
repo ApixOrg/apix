@@ -64,3 +64,11 @@ class ApixScalarType(type):
 
     def __instancecheck__(cls, value: Any) -> bool:
         return isinstance(value, cls.scalar_type)
+
+    @property
+    def gql_input_type(cls) -> GraphQLScalarType:
+        return cls.gql_scalar_type
+
+    @property
+    def gql_output_type(cls) -> GraphQLScalarType:
+        return cls.gql_scalar_type
