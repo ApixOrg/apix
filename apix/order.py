@@ -27,8 +27,8 @@ class ApixOrder:
 
     @property
     def order(self) -> List[Tuple]:
-        return [(direction.attribute.path_name, direction.value) for direction in self.directions]
+        return [direction.order for direction in self.directions]
 
     @property
     def pipeline(self) -> List[Dict]:
-        return [{'$sort': {direction.attribute.path_name: direction.value for direction in self.directions}}]
+        return [{'$sort': dict(self.order)}]

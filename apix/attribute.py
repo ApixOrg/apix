@@ -42,7 +42,7 @@ class ApixAttribute(type):
         'is_null', 'is_not_null', 'equal', 'not_equal', 'less_than', 'less_than_equal', 'greater_than', 'greater_than_equal', 'in', 'not_in',
         'any_is_null', 'any_is_not_null', 'any_equal', 'any_not_equal', 'any_less_than', 'any_less_than_equal', 'any_greater_than', 'any_greater_than_equal', 'any_in', 'any_not_in',
         'set', 'unset', 'increment', 'multiply', 'min', 'max', 'pull', 'pop',
-        'direction',
+        'ascending', 'descending',
         'filter', 'update', 'order', 'select', 'cursor', 'async_cursor',
         'operator',
     ]
@@ -147,7 +147,8 @@ class ApixAttribute(type):
         cls.Set = ApixSetOperationType(cls)
         cls.Unset = ApixUnsetOperationType(cls)
 
-        cls.Direction = ApixDirectionType(cls)
+        cls.Ascending = ApixAscendingDirectionType(cls)
+        cls.Descending = ApixDescendingDirectionType(cls)
 
         cls._model = None
         cls._parent = None
@@ -372,6 +373,14 @@ class ApixAttribute(type):
         return {operation_type.field_name: operation_type for operation_type in cls.operation_types}
 
     @cached_property
+    def direction_types(cls) -> List[ApixDirectionType]:
+        return [attr for attr in cls.__dict__.values() if isinstance(attr, ApixDirectionType)]
+
+    @cached_property
+    def direction_types_by_field_name(cls) -> Dict[str, ApixDirectionType]:
+        return {direction_type.field_name: direction_type for direction_type in cls.direction_types}
+
+    @cached_property
     def gql_wrapped_input_type(cls) -> GraphQLNonNull | GraphQLScalarType | GraphQLEnumType | GraphQLInputObjectType:
 
         if cls.gql_input_nullable:
@@ -524,7 +533,10 @@ class ApixAttribute(type):
     @cached_property
     def gql_direction_type_fields(cls) -> Dict[str, GraphQLInputField]:
 
-        fields = {'direction': cls.Direction.gql_input_field} # noqa
+        fields = {}
+
+        for direction_type in cls.direction_types:
+            fields[direction_type.field_name] = direction_type.gql_input_field
 
         for attribute in cls.attributes:
             if not attribute.is_from_reference_attribute:
@@ -555,8 +567,9 @@ class ApixAttribute(type):
         for key, val in value.items():
             if val is not None:
 
-                if key == 'direction':
-                    directions.append(val)
+                if key in cls.direction_types_by_field_name:
+                    direction_type = cls.direction_types_by_field_name.get(key)
+                    directions.append((val, direction_type()))
 
                 elif key in cls.attributes_by_field_name:
                     directions += val

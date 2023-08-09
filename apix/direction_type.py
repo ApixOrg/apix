@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import Dict, Tuple, TYPE_CHECKING
+from typing import Tuple, Type, TYPE_CHECKING
 
 from apix.direction import *
 from apix.gql import *
-from apix.operator import *
 from apix.utils import *
 
 
@@ -14,38 +13,47 @@ if TYPE_CHECKING:
 
 __all__ = [
     'ApixDirectionType',
+    'ApixAscendingDirectionType',
+    'ApixDescendingDirectionType',
 ]
 
 
 class ApixDirectionType(type):
 
-    def __new__(mcs, attribute: ApixAttribute):
-        return super().__new__(mcs, ApixDirection.__name__, (ApixDirection,), {})
+    def __new__(
+            mcs,
+            name: str,
+            base: Type[ApixDirection],
+            attribute: ApixAttribute,
+    ):
 
-    def __init__(cls, attribute: ApixAttribute):
+        return super().__new__(mcs, base.__name__, (base,), {})
 
-        super().__init__(ApixDirection.__name__, (ApixDirection,), {})
-        cls.name = 'direction'
+    def __init__(
+            cls,
+            name: str,
+            base: Type[ApixDirection],
+            attribute: ApixAttribute,
+    ):
+
+        super().__init__(base.__name__, (base,), {})
+        cls.name = name
+        cls.base = base
         cls.attribute = attribute
 
     def __repr__(self) -> str:
         return f'<{self.__name__}:{self.attribute.class_name}>'
 
     @cached_property
-    def gql_input_type(cls) -> GraphQLInputObjectType:
+    def field_name(cls) -> str:
+        return gql_snake_to_camel(cls.name, False)
 
-        return GraphQLInputObjectType(
-            name=f'{cls.attribute.class_path_name}DirectionItem',
-            fields={
-                'position': GraphQLInputField(GraphQLNonNull(GraphQLInt)),
-                'operator': ApixDirectionOperatorInputField,
-            },
-            description=None,
-            out_type=cls.gql_input_out_type,
-        )
+    @cached_property
+    def gql_input_type(cls) -> GraphQLInputType:
+        return GraphQLInt
 
-    def gql_input_out_type(cls, value: Dict) -> Tuple[int, ApixDirection]:
-        return value.get('position'), cls(value.get('operator').value)
+    def gql_input_out_type(cls, value: int) -> Tuple[int, ApixDirection]:
+        return value, cls()
 
     @cached_property
     def gql_input_field(cls) -> GraphQLInputField:
@@ -54,3 +62,21 @@ class ApixDirectionType(type):
             type_=cls.gql_input_type,
             description=None,
         )
+
+
+class ApixAscendingDirectionType(ApixDirectionType):
+
+    def __new__(mcs, attribute: ApixAttribute):
+        return super().__new__(mcs, 'ascending', ApixAscendingDirection, attribute)
+
+    def __init__(cls, attribute: ApixAttribute):
+        super().__init__('ascending', ApixAscendingDirection, attribute)
+
+
+class ApixDescendingDirectionType(ApixDirectionType):
+
+    def __new__(mcs, attribute: ApixAttribute):
+        return super().__new__(mcs, 'descending', ApixDescendingDirection, attribute)
+
+    def __init__(cls, attribute: ApixAttribute):
+        super().__init__('descending', ApixDescendingDirection, attribute)
