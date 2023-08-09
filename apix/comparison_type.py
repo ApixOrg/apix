@@ -16,6 +16,7 @@ __all__ = [
     'ApixComparisonType',
 
     'ApixIsNullComparisonType',
+    'ApixIsNotNullComparisonType',
     'ApixValueComparisonType',
     'ApixEqualComparisonType',
     'ApixNotEqualComparisonType',
@@ -27,6 +28,7 @@ __all__ = [
     'ApixNotInComparisonType',
 
     'ApixAnyIsNullComparisonType',
+    'ApixAnyIsNotNullComparisonType',
     'ApixAnyValueComparisonType',
     'ApixAnyEqualComparisonType',
     'ApixAnyNotEqualComparisonType',
@@ -227,7 +229,23 @@ class ApixIsNullComparisonType(ApixComparisonType):
 
     @cached_property
     def gql_input_type(cls) -> GraphQLInputType:
-        return GraphQLBoolean
+        return cls.attribute.gql_input_type
+
+    def from_value(cls, value: Any) -> ApixComparisonType:
+        return cls(value)
+
+
+class ApixIsNotNullComparisonType(ApixComparisonType):
+
+    def __new__(mcs, attribute: ApixAttribute):
+        return super().__new__(mcs, 'is_not_null', ApixIsNotNullComparison, attribute)
+
+    def __init__(cls, attribute: ApixAttribute):
+        super().__init__('is_not_null', ApixIsNotNullComparison, attribute)
+
+    @cached_property
+    def gql_input_type(cls) -> GraphQLInputType:
+        return cls.attribute.gql_input_type
 
     def from_value(cls, value: Any) -> ApixComparisonType:
         return cls(value)
@@ -315,7 +333,23 @@ class ApixAnyIsNullComparisonType(ApixComparisonType):
 
     @cached_property
     def gql_input_type(cls) -> GraphQLInputType:
-        return GraphQLBoolean
+        return cls.attribute.attribute.gql_input_type
+
+    def from_value(cls, value: Any) -> ApixComparisonType:
+        return cls(value)
+
+
+class ApixAnyIsNotNullComparisonType(ApixComparisonType):
+
+    def __new__(mcs, attribute: ApixAttribute):
+        return super().__new__(mcs, 'any_is_not_null', ApixAnyIsNotNullComparison, attribute)
+
+    def __init__(cls, attribute: ApixAttribute):
+        super().__init__('any_is_not_null', ApixAnyIsNotNullComparison, attribute)
+
+    @cached_property
+    def gql_input_type(cls) -> GraphQLInputType:
+        return cls.attribute.attribute.gql_input_type
 
     def from_value(cls, value: Any) -> ApixComparisonType:
         return cls(value)

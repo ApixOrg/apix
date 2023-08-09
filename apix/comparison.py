@@ -16,6 +16,7 @@ __all__ = [
     'ApixAnyValueComparison',
     'ApixAnyValuesComparison',
     'ApixIsNullComparison',
+    'ApixIsNotNullComparison',
     'ApixEqualComparison',
     'ApixNotEqualComparison',
     'ApixLessThanComparison',
@@ -25,6 +26,7 @@ __all__ = [
     'ApixInComparison',
     'ApixNotInComparison',
     'ApixAnyIsNullComparison',
+    'ApixAnyIsNotNullComparison',
     'ApixAnyEqualComparison',
     'ApixAnyNotEqualComparison',
     'ApixAnyLessThanComparison',
@@ -50,19 +52,28 @@ class ApixComparison:
 
 class ApixIsNullComparison(ApixComparison):
 
-    def __init__(self, value: Any):
-        self.value = bool(value)
+    def __init__(self, *args, **kwargs):
+        pass
 
     def __repr__(self) -> str:
-        return f'<{self.attribute.name}:{self.name}:{self.value}>'
+        return f'<{self.attribute.name}:{self.name}>'
 
     @property
     def condition(self) -> Dict:
+        return {self.attribute.path_name: {'$eq': None}}
 
-        if self.value:
-            return {self.attribute.path_name: {'$eq': None}}
-        else:
-            return {self.attribute.path_name: {'$ne': None}}
+
+class ApixIsNotNullComparison(ApixComparison):
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def __repr__(self) -> str:
+        return f'<{self.attribute.name}:{self.name}>'
+
+    @property
+    def condition(self) -> Dict:
+        return {self.attribute.path_name: {'$ne': None}}
 
 
 class ApixValueComparison(ApixComparison):
@@ -95,19 +106,28 @@ class ApixValuesComparison(ApixComparison):
 
 class ApixAnyIsNullComparison(ApixComparison):
 
-    def __init__(self, value: Any):
-        self.value = bool(value)
+    def __init__(self, *args, **kwargs):
+        pass
 
     def __repr__(self) -> str:
-        return f'<{self.attribute.name}:{self.name}:{self.value}>'
+        return f'<{self.attribute.name}:{self.name}>'
 
     @property
     def condition(self) -> Dict:
+        return {self.attribute.path_name: {'$elemMatch': {'$eq': None}}}
 
-        if self.value:
-            return {self.attribute.path_name: {'$elemMatch': {'$eq': None}}}
-        else:
-            return {self.attribute.path_name: {'$elemMatch': {'$ne': None}}}
+
+class ApixAnyIsNotNullComparison(ApixComparison):
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def __repr__(self) -> str:
+        return f'<{self.attribute.name}:{self.name}>'
+
+    @property
+    def condition(self) -> Dict:
+        return {self.attribute.path_name: {'$elemMatch': {'$ne': None}}}
 
 
 class ApixAnyValueComparison(ApixComparison):

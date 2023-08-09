@@ -39,8 +39,8 @@ __all__ = [
 class ApixAttribute(type):
 
     reserved_names = [
-        'is_null', 'equal', 'not_equal', 'less_than', 'less_than_equal', 'greater_than', 'greater_than_equal', 'in', 'not_in',
-        'any_is_null', 'any_equal', 'any_not_equal', 'any_less_than', 'any_less_than_equal', 'any_greater_than', 'any_greater_than_equal', 'any_in', 'any_not_in',
+        'is_null', 'is_not_null', 'equal', 'not_equal', 'less_than', 'less_than_equal', 'greater_than', 'greater_than_equal', 'in', 'not_in',
+        'any_is_null', 'any_is_not_null', 'any_equal', 'any_not_equal', 'any_less_than', 'any_less_than_equal', 'any_greater_than', 'any_greater_than_equal', 'any_in', 'any_not_in',
         'set', 'unset', 'increment', 'multiply', 'min', 'max', 'pull', 'pop',
         'direction',
         'filter', 'update', 'order', 'select', 'cursor', 'async_cursor',
@@ -134,6 +134,7 @@ class ApixAttribute(type):
         cls.gql_order_included = gql_order_included
 
         cls.IsNull = ApixIsNullComparisonType(cls)
+        cls.IsNotNull = ApixIsNotNullComparisonType(cls)
         cls.Equal = ApixEqualComparisonType(cls)
         cls.NotEqual = ApixNotEqualComparisonType(cls)
         cls.LessThan = ApixLessThanComparisonType(cls)
@@ -838,6 +839,7 @@ class ApixListAttribute(ApixAttribute):
         cls._elements = {}
 
         cls.AnyIsNull = ApixAnyIsNullComparisonType(cls)
+        cls.AnyIsNotNull = ApixAnyIsNotNullComparisonType(cls)
         cls.AnyEqual = ApixAnyEqualComparisonType(cls)
         cls.AnyNotEqual = ApixAnyNotEqualComparisonType(cls)
         cls.AnyLessThan = ApixAnyLessThanComparisonType(cls)
