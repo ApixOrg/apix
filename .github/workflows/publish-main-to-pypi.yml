@@ -25,8 +25,9 @@ jobs:
 
     - name: Install Poetry, build package, publish to Test PyPI
       env:
-        POETRY_PYPI_TOKEN_PYPI: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        POETRY_PYPI_TOKEN_PYPI:
       run: |
         pip install poetry
         poetry build
-        poetry publish --username __token__
+                poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
+        poetry publish
