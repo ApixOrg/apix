@@ -4,6 +4,7 @@ from inspect import isawaitable, signature, Parameter
 from types import UnionType
 from typing import Any, Callable, Dict, List, Optional, Union, get_origin, get_args, TYPE_CHECKING
 
+from apix.error import *
 from apix.gql import *
 from apix.utils import *
 
@@ -138,6 +139,16 @@ class ApixResolver:
             gql_resolve_info: GraphQLResolveInfo,
             **kwargs,
     ) -> Any:
+
+        if self.require_authentication:
+            if not gql_resolve_info.context.requested_by:
+                try:
+                    raise self.app.authenticator.error
+                except AttributeError:
+                    raise ApixError(
+                        message='Resolver requires authentication but authenticator not found',
+                        code='AUTHENTICATOR_NOT_FOUND',
+                    )
 
         if 'select' in self.parameters_by_name:
             kwargs['select'] = self.output_base.create_select_from_gql_resolve_info(gql_resolve_info)
