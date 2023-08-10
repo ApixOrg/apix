@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 __all__ = [
     'ApixOperation',
     'ApixValueOperation',
-    'ApixSetOperation',
     'ApixUnsetOperation',
+    'ApixSetOperation',
     'ApixIncrementOperation',
     'ApixMultiplyOperation',
     'ApixMinOperation',
@@ -26,12 +26,20 @@ class ApixOperation:
     name: str
     attribute: ApixAttribute
 
-    def __new__(cls, *args, **kwargs):
-        return super().__new__(cls)
-
     @property
     def update(self) -> Dict:
         raise NotImplementedError
+
+
+class ApixUnsetOperation(ApixOperation):
+    operator: ApixUpdateOperator
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    @property
+    def update(self):
+        return {self.operator.value: {self.attribute.path_name: None}}
 
 
 class ApixValueOperation(ApixOperation):
@@ -49,10 +57,6 @@ class ApixValueOperation(ApixOperation):
 
 
 class ApixSetOperation(ApixValueOperation):
-    pass
-
-
-class ApixUnsetOperation(ApixValueOperation):
     pass
 
 

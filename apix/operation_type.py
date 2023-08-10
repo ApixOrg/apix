@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 __all__ = [
     'ApixOperationType',
     'ApixValueOperationType',
-    'ApixSetOperationType',
     'ApixUnsetOperationType',
+    'ApixSetOperationType',
     'ApixIncrementOperationType',
     'ApixMultiplyOperationType',
     'ApixMinOperationType',
@@ -78,6 +78,26 @@ class ApixOperationType(type):
         )
 
 
+class ApixUnsetOperationType(ApixOperationType):
+
+    def __new__(mcs, attribute: ApixAttribute):
+        return super().__new__(mcs, 'unset', ApixUnsetOperation, attribute)
+
+    def __init__(cls, attribute: ApixAttribute):
+        super().__init__('unset', ApixUnsetOperation, attribute)
+        cls.operator = ApixUpdateOperator.UNSET
+
+    @cached_property
+    def gql_input_type(cls) -> GraphQLInputType:
+        raise cls.attribute.gql_input_type
+
+    def from_value(
+            cls,
+            value: Any,
+    ) -> ApixOperation:
+        raise cls()
+
+
 class ApixValueOperationType(ApixOperationType):
 
     def __new__(
@@ -123,15 +143,6 @@ class ApixSetOperationType(ApixValueOperationType):
 
     def __init__(cls, attribute: ApixAttribute):
         super().__init__('set', ApixSetOperation, attribute, ApixUpdateOperator.SET)
-
-
-class ApixUnsetOperationType(ApixValueOperationType):
-
-    def __new__(mcs, attribute: ApixAttribute):
-        return super().__new__(mcs, 'unset', ApixUnsetOperation, attribute, ApixUpdateOperator.UNSET)
-
-    def __init__(cls, attribute: ApixAttribute):
-        super().__init__('unset', ApixUnsetOperation, attribute, ApixUpdateOperator.UNSET)
 
 
 class ApixIncrementOperationType(ApixValueOperationType):
