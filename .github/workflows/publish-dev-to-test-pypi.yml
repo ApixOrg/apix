@@ -29,5 +29,5 @@ jobs:
       run: |
         pip install poetry
         poetry config repositories.testpypi https://test.pypi.org/legacy/
-        poetry build  --only-root
+        poetry build
         poetry publish --repository testpypi --username __token__ --skip-existing

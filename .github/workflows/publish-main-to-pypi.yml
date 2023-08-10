@@ -28,5 +28,5 @@ jobs:
         POETRY_PYPI_TOKEN_PYPI: ${{ secrets.TEST_PYPI_API_TOKEN }}
       run: |
         pip install poetry
-        poetry build  --only-root
+        poetry build
         poetry publish --username __token__
