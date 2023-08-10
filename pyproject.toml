@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "apix-core"
-version = "0.0.7"
+version = "0.0.8"
 description = "apiX - The Python framework to create MongoDB-backed applications with GraphQL API web interface."
 authors = ["Danijel Kivaranovic <dan@apix.org>"]
 license = "MIT"
