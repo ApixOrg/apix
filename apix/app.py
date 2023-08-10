@@ -33,6 +33,7 @@ class ApixApp(Starlette):
             resolvers: List[ApixResolver] = None,
             authenticator: ApixAuthenticator = None,
             error_handlers: List[ApixErrorHandler] = None,
+            gql_execution_result_extensions: bool = False,
             **kwargs,
     ):
 
@@ -56,6 +57,9 @@ class ApixApp(Starlette):
                     if not isinstance(error_handler, ApixErrorHandler):
                         raise TypeError("Each element of the argument 'error_handlers' must be an ApixErrorHandler")
 
+        if not isinstance(gql_execution_result_extensions, bool):
+            raise TypeError("The argument 'gql_execution_result_extensions' must be a boolean")
+
         return super().__new__(cls)
 
     def __init__(
@@ -64,6 +68,7 @@ class ApixApp(Starlette):
             resolvers: List[ApixResolver] = None,
             authenticator: ApixAuthenticator = None,
             error_handlers: List[ApixErrorHandler] = None,
+            gql_execution_result_extensions: bool = False,
             **kwargs,
     ):
 
@@ -79,6 +84,7 @@ class ApixApp(Starlette):
         self.resolvers = resolvers
         self.authenticator = authenticator
         self.error_handlers = error_handlers
+        self.gql_execution_result_extensions = gql_execution_result_extensions
 
         if 'routes' not in kwargs:
             kwargs['routes'] = []
@@ -175,6 +181,9 @@ class ApixApp(Starlette):
 
         if inspect.isawaitable(execution_result):
             execution_result = await execution_result
+
+        if self.gql_execution_result_extensions:
+            execution_result.extensions = context.extensions
 
         if execution_result.errors:
             for error in execution_result.errors:

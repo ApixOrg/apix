@@ -27,7 +27,6 @@ class ApixResolver:
             resolve: Callable,
             *,
             require_authentication: bool = False,
-            return_context: bool = False,
             gql_resolver_field_description: str = None,
     ):
 
@@ -38,9 +37,6 @@ class ApixResolver:
 
         if not isinstance(require_authentication, bool):
             raise TypeError("The argument 'require_authentication' must be a boolean")
-
-        if not isinstance(return_context, bool):
-            raise TypeError("The argument 'return_context' must be a boolean")
 
         if gql_resolver_field_description is not None:
             if not isinstance(gql_resolver_field_description, str):
