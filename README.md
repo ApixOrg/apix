@@ -1,43 +1,43 @@
 
-[<img src="https://www.apix.org/apix-dark-logo.png" height="200">](https://apix.org)
+[<img src="https://www.apix.org/apix-logo-dark-mode.png" height="200">](https://apix.org)
 
 
 
 ---
 
-**Documentation**: https://apix.org (in progress)
+**Documentation**: https://apix.org
 
 **Source Code**: https://github.com/ApixOrg/apix
 
 ---
 
-**apiX** is a framework to create MongoDB-backed applications with a GraphQL API web interface. 
-**apiX** drastically simplifies the linkage between the backend and the web interface. 
-**apiX** enables you to build applications in a beautiful pythonic way without dealing with
-technical libraries, such as, [pymongo](https://pymongo.readthedocs.io/en/stable/) for MongoDB operations 
-and [graphql-core](https://graphql-core-3.readthedocs.io/en/latest/) for the GraphQL API. 
+**apiX** is a full-stack framework for backend developlment. **apiX** integrates all necessary components to create 
+powerful backend applications in Python with just a few lines of code. Use **apiX** to create with ease 
+-backed applications with a [GraphQL]() API . 
+
+## Integrated technologies
+
+- [MongoDB](https://www.mongodb.com): The schemaless and document-oriented database is ideal to effortlessly create powerful applications from scratch.
+- [GraphQL](https://graphql.org): The query language for APIs is perfectly suited to create efficient and well-documented APIs.
+- [Google Cloud Storage](https://cloud.google.com/storage): The powerful object storage from Google allows you store data of any size and format.
 
 ## Installation
 
-**apiX** is available on PyPI and can be installed with pip.
+The **apiX** library is published on [PyPI](https://pypi.org/project/apix-core/) and can be installed with the following pip command.
 
 ```commandline
 pip install apix-core
 ```
 
-You can also directly install the latest version from Github.
+You can use [Uvicorn](https://www.uvicorn.org) to run the application. Uvicorn is an ASGI web server implementation for Python. To install apiX together with uvicorn run this pip command.
 
 ```commandline
-pip install git+https:://github.com/ApixOrg/apix.git
+pip install 'apix-core[uvicorn]'
 ```
 
-## Why use MongoDB and GraphQL?
+## Documentation
 
-|                 | [<img src="https://www.apix.org/mongodb-color-logo.png" height="50">](https://mongodb.com)                                                              | [<img src="https://www.apix.org/graphql-color-logo.png" height="50">](https://graphql.org)                                                                 |
-|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Description** | MongoDB is a schemaless database that stores arbitrary JSON objects (so called "Documents").                                                            | GraphQL is a flexible query language for APIs that allows you to specify exactly the fields which you want to request.                                     |
-| **Advantages**  | 1. Create document collections on-the-fly. <br/> 2. Documents can be nested and contain arrays. <br/> 3. Powerful data platform in the cloud available. | 1. Reduce the amount of data transmitted. <br/> 2. The requests are strictly type-safe. <br/>  3. Multiple resources can be collected in a single request. |
-| **Article**     | [Why use MongoDB?](https://www.mongodb.com/why-use-mongodb)                                                                                             | [Why use GraphQL?](https://www.apollographql.com/blog/graphql/basics/why-use-graphql)                                                                      |
+Go to our website [apix.org](https://apix.org) and check out the detailed documentation.
 
 ## Example App
 
@@ -46,7 +46,12 @@ with the connection string to your MongoDB instance.
 
 ```python 
 import uvicorn
-from apix import *
+from apix.app import ApixApp
+from apix.attribute import ApixIntegerAttribute, ApixStringAttribute
+from apix.database import ApixDatabase
+from apix.model import ApixModel
+from apix.resolver import ApixMutationResolver, ApixQueryResolver
+from apix.scalar import ApixString
 
 
 # Connection details of your MongoDB instance
@@ -73,7 +78,7 @@ def create_user(user: User) -> User:
 
 
 # Function to find a user by name
-def find_user_by_name(name: str) -> User:
+def find_user_by_name(name: ApixString) -> User:
     return Database(User).find_one(User.Name.Equal(name))
 
 
