@@ -30,4 +30,4 @@ jobs:
         pip install poetry
         poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
         poetry build
-        poetry publish
+        poetry publish --username __token__
