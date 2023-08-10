@@ -19,11 +19,11 @@ starlette = "^0.26.1"
 pymongo = "^4.3.3"
 motor = "^3.1.1"
 graphql-core = "^3.2.3"
+uvicorn = {version = "^0.23.2", optional = true}
 
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
-
 
 [tool.poetry.extras]
 uvicorn = ["uvicorn"]
