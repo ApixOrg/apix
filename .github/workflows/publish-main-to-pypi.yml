@@ -23,11 +23,11 @@ jobs:
       with:
         python-version: "3.11"
 
-    - name: Install Poetry, build package, publish to Test PyPI
+    - name: Install Poetry, build package, publish to PyPI
       env:
         POETRY_PYPI_TOKEN_PYPI:
       run: |
         pip install poetry
         poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
         poetry build
-        poetry publish --repository pypi
+        poetry publish
