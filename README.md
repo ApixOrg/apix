@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
 ```
 
-Once your app is running, the GraphQL API web interface is available at [http://localhost:8080/graphql](). Now open your favorite web client (such as [Insomnia](https://insomnia.rest) or [Postman](https://www.postman.com)) 
+Once your app is running, the GraphQL API is available at [http://localhost:8080/graphql](). Now open your favorite web client (such as [Insomnia](https://insomnia.rest) or [Postman](https://www.postman.com)) 
 and create a user with the following request.
 
 ```graphql
