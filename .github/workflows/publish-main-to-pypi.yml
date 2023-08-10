@@ -28,6 +28,6 @@ jobs:
         POETRY_PYPI_TOKEN_PYPI:
       run: |
         pip install poetry
+        poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
         poetry build
-                poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
         poetry publish
