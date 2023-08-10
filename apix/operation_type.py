@@ -89,7 +89,7 @@ class ApixUnsetOperationType(ApixOperationType):
 
     @cached_property
     def gql_input_type(cls) -> GraphQLInputType:
-        raise cls.attribute.gql_input_type
+        return cls.attribute.gql_input_type
 
     def from_value(
             cls,
